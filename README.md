@@ -1,14 +1,14 @@
 # Personal Portfolio Website With AWS Deployment
 ## Overview
-My personal portfolio website project found here: https://github.com/alexd-ev/personal-website now showcases backend deployment on Amazon EC2, ECS, and API Gateway + AWS Lambda. (WIP).
+My personal portfolio website project found here: https://github.com/alexd-ev/personal-website now showcases backend deployment on Amazon EC2.
 
 ## Technical Specification
 For backend deployment using the AWS Management Console is preferred, but can be achieved using the AWS CLI.
 
 ## Amazon EC2
-Launch an EC2 instance. This example uses a Ubuntu Server 26.04 (64-bit) VM image, and the t3.micro instance type is sufficient for this application. Create a login key pair, then use these inbound security group rules:
+Launch an EC2 instance. This example uses an Ubuntu Server 26.04 (64-bit) VM image, and the t3.micro instance type is sufficient for this application. Create a login key pair, then use these inbound security group rules:
 - SSH for your IP, to SSH only from your current machine for security
-- Custom TCP: port 7001 for Anywhere, so any machine can connect to the website through the application port
+- Custom TCP: port 7001 for anywhere, so any machine can connect to the website through the application port
 - HTTP for anywhere, so any machine can connect to the website through HTTP
 - HTTPS for anywhere, so any machine can connect to the website through HTTPS
 - All ICMP - IPv4 for your IP, to diagnose instance connectivity issues from your current machine
@@ -27,11 +27,11 @@ Install JDK 25 which includes the JRE to run the application (by default the Ubu
 ```bash
 sudo apt install default-jdk -y
 ```
-Test the Javalin web server by first downloading the released `alexds-personal-website-1.0.0.zip` archive found here: https://github.com/alexd-ev/personal-website/releases/latest. Then copy the archive to the instance's default home directory using SCP:
+Test the Javalin web server by first downloading the released `alexds-personal-website-1.0.0.zip` archive found here: https://github.com/alexd-ev/personal-website/releases/latest. Then copy the archive from your host machine to the instance's default home directory using SCP:
 ```bash
 scp -i path/to/private_key_file/name.pem alexds-personal-website-1.0.0.zip ubuntu@<public_dns_address>:
 ```
-Extract the files using unzip:
+Back to the instance, extract the files using unzip:
 ```bash
 sudo apt install unzip
 unzip alexds-personal-website-1.0.0.zip
@@ -84,7 +84,7 @@ After=network.target
 [Service]
 User=ubuntu
 WorkingDirectory=/home/ubuntu
-ExecStart=/usr/bin/java -jar /home/ubuntu/alexds-personal-website-1.0.0.jar
+ExecStart=/usr/bin/java --enable-native-access=ALL-UNNAMED -jar /home/ubuntu/alexds-personal-website-1.0.0.jar
 SuccessExitStatus=143
 Restart=always
 RestartSec=10
@@ -107,11 +107,5 @@ If a contact message has been submitted, can view via the sqlite3 CLI:
 ```bash
 sudo apt install sqlite3
 sqlite3 database/AboutMe.db
-SELECT * FROM contact_messages
+SELECT * FROM contact_messages;
 ```
-
-## Amazon ECS
-
-
-## Amazon API Gateway + AWS Lambda
-
