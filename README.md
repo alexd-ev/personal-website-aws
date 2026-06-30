@@ -109,3 +109,8 @@ sudo apt install sqlite3
 sqlite3 database/AboutMe.db
 SELECT * FROM contact_messages;
 ```
+
+# Author
+`alexd-ev` (Alex Davidson)
+
+Copyright Alex Davidson (c) 2026
