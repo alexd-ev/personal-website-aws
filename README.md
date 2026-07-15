@@ -7,11 +7,11 @@ For backend deployment using the AWS Management Console is preferred, but can be
 
 ## Amazon EC2
 Launch an EC2 instance. This example uses an Ubuntu Server 26.04 (64-bit) VM image, and the t3.micro instance type is sufficient for this application. Create a login key pair, then use these inbound security group rules:
-- SSH for your IP, to SSH only from your current machine for security
-- Custom TCP: port 7001 for anywhere, so any machine can connect to the website through the application port
-- HTTP for anywhere, so any machine can connect to the website through HTTP
-- HTTPS for anywhere, so any machine can connect to the website through HTTPS
-- All ICMP - IPv4 for your IP, to diagnose instance connectivity issues from your current machine
+- `SSH` for your IP, to SSH only from your current machine for security
+- `Custom TCP`: port 7001 for anywhere, so any machine can connect to the website through the application port
+- `HTTP` for anywhere, so any machine can connect to the website through HTTP
+- `HTTPS` for anywhere, so any machine can connect to the website through HTTPS
+- `All ICMP - IPv4` for your IP, to diagnose instance connectivity issues from your current machine
 
 Set the private key permissions to read only for owners only, then copy the Public IPv4 DNS address of the running instance and SSH into it by running this command in a terminal:
 ```bash
@@ -31,7 +31,7 @@ Test the Javalin web server by first downloading the released `alexds-personal-w
 ```bash
 scp -i path/to/private_key_file/name.pem alexds-personal-website-1.0.0.zip ubuntu@<public_dns_address>:
 ```
-Back to the instance, extract the files using unzip:
+Back to the instance, extract the files using `unzip`:
 ```bash
 sudo apt install unzip
 unzip alexds-personal-website-1.0.0.zip
@@ -42,7 +42,7 @@ java --enable-native-access=ALL-UNNAMED -jar alexds-personal-website-1.0.0.jar
 ```
 Go to http://instance-public-dns-address:7001/
 
-The next step is to use the Apache HTTP Server for this example, to forward HTTP requests to the Javalin web server (reverse proxy). Install it using the apt package manager:
+The next step is to use the Apache HTTP Server for this example, to forward HTTP requests to the Javalin web server (reverse proxy). Install it using the `apt` package manager:
 ```bash
 sudo apt install apache2 -y
 ```
@@ -103,7 +103,7 @@ View application logs:
 ```bash
 sudo journalctl -u personal-website -f
 ```
-If a contact message has been submitted, can view via the sqlite3 CLI:
+If a contact message has been submitted, can view via the `sqlite3` CLI:
 ```bash
 sudo apt install sqlite3
 sqlite3 database/AboutMe.db
