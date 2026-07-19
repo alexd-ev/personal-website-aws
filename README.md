@@ -3,7 +3,7 @@
 My personal portfolio website project found here: https://github.com/alexd-ev/personal-website now showcases backend deployment on Amazon EC2.
 
 ## Technical Specification
-For backend deployment using the AWS Management Console is preferred, but can be achieved using the AWS CLI.
+For backend deployment using the AWS Management Console is preferred, but can be achieved using the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
 
 ## Amazon EC2
 Launch an EC2 instance. This example uses an Ubuntu Server 26.04 (64-bit) VM image, and the t3.micro instance type is sufficient for this application. Create a login key pair, then use these inbound security group rules:
