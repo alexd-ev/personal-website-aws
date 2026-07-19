@@ -27,18 +27,18 @@ Install JDK 25 which includes the JRE to run the application (by default the Ubu
 ```bash
 sudo apt install default-jdk -y
 ```
-Test the Javalin web server by first downloading the released `alexds-personal-website-1.0.0.zip` archive found here: https://github.com/alexd-ev/personal-website/releases/latest. Then copy the archive from your host machine to the instance's default home directory using SCP:
+Test the Javalin web server by first downloading the released `alexds-personal-website-1.1.0.zip` archive found here: https://github.com/alexd-ev/personal-website/releases/latest. Then copy the archive from your host machine to the instance's default home directory using SCP:
 ```bash
-scp -i path/to/private_key_file/name.pem alexds-personal-website-1.0.0.zip ubuntu@<public_dns_address>:
+scp -i path/to/private_key_file/name.pem alexds-personal-website-1.1.0.zip ubuntu@<public_dns_address>:
 ```
 Back to the instance, extract the files using `unzip`:
 ```bash
 sudo apt install unzip
-unzip alexds-personal-website-1.0.0.zip
+unzip alexds-personal-website-1.1.0.zip
 ```
 Run the application using Java:
 ```bash
-java --enable-native-access=ALL-UNNAMED -jar alexds-personal-website-1.0.0.jar
+java --enable-native-access=ALL-UNNAMED -jar alexds-personal-website-1.1.0.jar
 ```
 Go to http://instance-public-dns-address:7001/
 
@@ -84,7 +84,7 @@ After=network.target
 [Service]
 User=ubuntu
 WorkingDirectory=/home/ubuntu
-ExecStart=/usr/bin/java --enable-native-access=ALL-UNNAMED -jar /home/ubuntu/alexds-personal-website-1.0.0.jar
+ExecStart=/usr/bin/java --enable-native-access=ALL-UNNAMED -jar /home/ubuntu/alexds-personal-website-1.1.0.jar
 SuccessExitStatus=143
 Restart=always
 RestartSec=10
