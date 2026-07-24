@@ -3,7 +3,7 @@
 My personal portfolio website project found here: https://github.com/alexd-ev/personal-website now showcases backend deployment on Amazon EC2.
 
 ## Technical Specification
-For backend deployment using the AWS Management Console is preferred, but can be achieved using the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+For backend deployment using the AWS Management Console is preferred, but can be achieved using the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) (see [Launching via AWS CLI](#launching-via-aws-cli)).
 
 ## Amazon EC2
 Launch an EC2 instance. This example uses an Ubuntu Server 26.04 (64-bit) VM image, and the t3.micro instance type is sufficient for this application. Create a login key pair, then use these inbound security group rules:
@@ -13,6 +13,83 @@ Launch an EC2 instance. This example uses an Ubuntu Server 26.04 (64-bit) VM ima
 - `HTTPS` for anywhere, so any machine can connect to the website through HTTPS
 - `All ICMP - IPv4` for your IP, to diagnose instance connectivity issues from your current machine
 
+## Launching via AWS CLI
+If instead using the AWS CLI, first configure the region and login:
+```bash
+aws configure set region <your_region>
+aws login
+```
+Create a security group within your default Amazon Virtual Private Cloud (VPC) replacing the value of `--vpc-id` with your actual VPC ID.
+```bash
+SG_ID=$(aws ec2 create-security-group \
+    --group-name "ubuntu-2604-sg" \
+    --description "Security group for Ubuntu 26.04 web server" \
+    --vpc-id "vpc-xxxxxxxxxxxxxxxxx" \
+    --query 'GroupId' \
+    --output text)
+echo $SG_ID
+```
+List your IP address for configuring inbound rules:
+```bash
+MY_IP=$(curl -s https://checkip.amazonaws.com)/32
+echo $MY_IP
+```
+Then add the inbound rules as above:
+```bash
+# 1. SSH (Port 22) allowed only from your specific IP address
+aws ec2 authorize-security-group-ingress \
+    --group-id $SG_ID \
+    --protocol tcp \
+    --port 22 \
+    --cidr $MY_IP
+
+# 2. Custom TCP Port 7001 allowed from anywhere (0.0.0.0/0)
+aws ec2 authorize-security-group-ingress \
+    --group-id $SG_ID \
+    --protocol tcp \
+    --port 7001 \
+    --cidr 0.0.0.0/0
+
+# 3. HTTP (Port 80) allowed from anywhere (0.0.0.0/0)
+aws ec2 authorize-security-group-ingress \
+    --group-id $SG_ID \
+    --protocol tcp \
+    --port 80 \
+    --cidr 0.0.0.0/0
+
+# 4. HTTPS (Port 443) allowed from anywhere (0.0.0.0/0)
+aws ec2 authorize-security-group-ingress \
+    --group-id $SG_ID \
+    --protocol tcp \
+    --port 443 \
+    --cidr 0.0.0.0/0
+
+# 5. All ICMP - IPv4 (type -1, code -1) allowed only from your specific IP address
+aws ec2 authorize-security-group-ingress \
+    --group-id $SG_ID \
+    --protocol icmp \
+    --port -1 \
+    --cidr $MY_IP
+```
+Create your key login pair:
+```bash
+aws ec2 create-key-pair \
+    --key-name "MyNewKeyPair" \
+    --key-type ed25519 \
+    --query "KeyMaterial" \
+    --output text > MyNewKeyPair.pem
+```
+Finally launch the instance:
+```bash
+aws ec2 run-instances \
+    --image-id resolve:ssm:/aws/service/canonical/ubuntu/server/26.04/stable/current/amd64/hvm/ebs-gp3/ami-id \
+    --instance-type t3.micro \
+    --key-name "MyNewKeyPair" \
+    --security-group-ids $SG_ID \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=Ubuntu-26.04-Server}]'
+```
+
+## Customising Instance
 Set the private key permissions to read only for owners only, then copy the Public IPv4 DNS address of the running instance and SSH into it by running this command in a terminal:
 ```bash
 ssh -i path/to/private_key_file/name.pem ubuntu@<public_dns_address>
