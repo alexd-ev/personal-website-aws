@@ -88,6 +88,16 @@ aws ec2 run-instances \
     --security-group-ids $SG_ID \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=Ubuntu-26.04-Server}]'
 ```
+When an instance restarts, Amazon changes the public IPv4 address. To combat this, allocate a static elastic IP and bind it to the instance so the public address never changes:
+```bash
+aws ec2 allocate-address --domain vpc
+```
+Copy the "InstanceID" value from when running the instance and the "AllocationID" value for associating:
+```bash
+aws ec2 associate-address \
+    --instance-id i-xxxxxxxxxxxxxxxx \
+    --allocation-id eipalloc-xxxxxxxxxxxxxxxx
+```
 
 ## Customising Instance
 Set the private key permissions to read only for owners only, then copy the Public IPv4 DNS address of the running instance and SSH into it by running this command in a terminal:
